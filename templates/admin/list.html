@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pager %}
+{% block title %}{{ table }}{% endblock %}
+{% block content %}
+<a href="{{ url_for('admin.index') }}" class="small">&larr; All tables</a>
+<div class="d-flex justify-content-between align-items-center mb-3 mt-2">
+  <h3>{{ table }} <small class="text-muted fs-6">({{ pagination.total }})</small></h3>
+  <a class="btn btn-primary" href="{{ url_for('admin.add_row', table=table) }}">Add new</a>
+</div>
+
+<div class="table-responsive">
+<table class="table table-sm table-striped align-middle">
+  <thead><tr>{% for c in columns %}<th>{{ c.name }}</th>{% endfor %}<th></th></tr></thead>
+  <tbody>
+  {% for row_id, cells in rows %}
+    <tr>
+      {% for cell in cells %}<td>{{ cell }}</td>{% endfor %}
+      <td class="text-end text-nowrap">
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.edit_row', table=table, row_id=row_id) }}">Edit</a>
+        <form class="d-inline" method="post" action="{{ url_for('admin.delete_row', table=table, row_id=row_id) }}" onsubmit="return confirm('Delete this record?')">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-sm btn-outline-danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="{{ columns|length + 1 }}" class="text-muted">No records.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{{ pager(pagination, 'admin.list_rows', table=table) }}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}My Applications{% endblock %}
+{% block content %}
+<h3 class="mb-3">My Applications</h3>
+{% if applications %}
+<div class="table-responsive">
+<table class="table align-middle">
+  <thead><tr><th>Job</th><th>Company</th><th>Applied on</th><th>Status</th><th>History</th><th></th></tr></thead>
+  <tbody>
+  {% for a in applications %}
+    <tr>
+      <td><a href="{{ url_for('main.job_detail', job_id=a.job.id) }}">{{ a.job.title }}</a></td>
+      <td>{{ a.job.company.name }}</td>
+      <td>{{ a.applied_at.strftime('%d %b %Y') }}</td>
+      <td><span class="badge bg-primary">{{ a.status.name }}</span></td>
+      <td class="small text-muted">
+        {% for h in a.history %}{{ h.status.name }}{% if not loop.last %} &rarr; {% endif %}{% endfor %}
+      </td>
+      <td>
+        {% if a.status.name == 'Applied' %}
+        <form method="post" action="{{ url_for('seeker.withdraw', app_id=a.id) }}" onsubmit="return confirm('Withdraw this application?')">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-sm btn-outline-danger">Withdraw</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+  <p class="text-muted">You have not applied for any job yet. <a href="{{ url_for('main.jobs') }}">Browse jobs</a></p>
+{% endif %}
+{% endblock %}

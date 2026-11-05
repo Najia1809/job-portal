@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}Apply{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow-sm"><div class="card-body">
+      <h3>Apply for: {{ job.title }}</h3>
+      <p class="text-muted">{{ job.company.name }}</p>
+      <form method="post" novalidate>
+        {{ form.hidden_tag() }}
+        {{ field(form.resume_id) }}
+        {{ field(form.cover_letter) }}
+        <button class="btn btn-primary">Submit application</button>
+        <a class="btn btn-outline-secondary" href="{{ url_for('main.job_detail', job_id=job.id) }}">Cancel</a>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

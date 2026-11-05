@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}{{ 'Edit job' if editing else 'Post a job' }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow-sm"><div class="card-body">
+      <h3 class="mb-3">{{ 'Edit job' if editing else 'Post a new job' }}</h3>
+      <form method="post" novalidate>
+        {{ form.hidden_tag() }}
+        {{ field(form.title) }}
+        {{ field(form.description) }}
+        <div class="row">
+          <div class="col-md-6">{{ field(form.category_id) }}</div>
+          <div class="col-md-6">{{ field(form.job_type_id) }}</div>
+          <div class="col-md-6">{{ field(form.experience_level_id) }}</div>
+          <div class="col-md-6">{{ field(form.salary_range_id) }}</div>
+          <div class="col-md-6">{{ field(form.city_id) }}</div>
+          <div class="col-md-6">{{ field(form.deadline) }}</div>
+        </div>
+        {{ field(form.skills) }}
+        {{ field(form.is_active) }}
+        <button class="btn btn-primary">{{ 'Update' if editing else 'Post job' }}</button>
+        <a class="btn btn-outline-secondary" href="{{ url_for('employer.dashboard') }}">Cancel</a>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

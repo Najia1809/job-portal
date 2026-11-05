@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Employer Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Employer Dashboard</h3>
+  <div>
+    <a class="btn btn-outline-primary" href="{{ url_for('employer.company') }}">{{ 'Edit company' if employer.company else 'Add company' }}</a>
+    <a class="btn btn-primary" href="{{ url_for('employer.job_new') }}">Post a job</a>
+  </div>
+</div>
+
+{% if employer.company %}
+  <div class="card mb-4"><div class="card-body">
+    <h5 class="mb-1">{{ employer.company.name }}</h5>
+    <p class="text-muted mb-0">{{ employer.company.industry.name }}{% if employer.company.city %} | {{ employer.company.city.name }}{% endif %}</p>
+  </div></div>
+
+  <h5>My Jobs</h5>
+  <div class="table-responsive">
+  <table class="table align-middle">
+    <thead><tr><th>Title</th><th>Status</th><th>Applications</th><th></th></tr></thead>
+    <tbody>
+    {% for job in jobs %}
+      <tr>
+        <td><a href="{{ url_for('main.job_detail', job_id=job.id) }}">{{ job.title }}</a></td>
+        <td>{% if job.is_active %}<span class="badge bg-success">Open</span>{% else %}<span class="badge bg-secondary">Closed</span>{% endif %}</td>
+        <td>{{ job.applications|length }}</td>
+        <td class="text-end">
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('employer.job_applications', job_id=job.id) }}">Applications</a>
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('employer.job_edit', job_id=job.id) }}">Edit</a>
+          <form class="d-inline" method="post" action="{{ url_for('employer.job_delete', job_id=job.id) }}" onsubmit="return confirm('Delete this job?')">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-outline-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="4" class="text-muted">You have not posted any job yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+{% else %}
+  <div class="alert alert-info">Please add your company details first, then you can post jobs.</div>
+{% endif %}
+{% endblock %}

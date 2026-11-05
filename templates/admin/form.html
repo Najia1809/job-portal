@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if editing else 'Add' }} {{ table }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow-sm"><div class="card-body">
+      <h3 class="mb-3">{{ 'Edit' if editing else 'Add' }} - {{ table }}</h3>
+      <form method="post" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {% for f in fields %}
+          <div class="mb-3">
+            {% if f.kind == 'checkbox' %}
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="{{ f.name }}" name="{{ f.name }}" {{ 'checked' if f.value }}>
+                <label class="form-check-label" for="{{ f.name }}">{{ f.label }}</label>
+              </div>
+            {% else %}
+              <label class="form-label" for="{{ f.name }}">{{ f.label }}{% if f.required %} <span class="text-danger">*</span>{% endif %}</label>
+              {% if f.kind == 'select' %}
+                <select class="form-select" id="{{ f.name }}" name="{{ f.name }}">
+                  <option value="">-- choose --</option>
+                  {% for value, text in f.options %}
+                    <option value="{{ value }}" {{ 'selected' if f.value|string == value|string }}>{{ text }}</option>
+                  {% endfor %}
+                </select>
+              {% elif f.kind == 'textarea' %}
+                <textarea class="form-control" rows="4" id="{{ f.name }}" name="{{ f.name }}">{{ f.value }}</textarea>
+              {% elif f.kind == 'password' %}
+                <input class="form-control" type="password" id="{{ f.name }}" name="{{ f.name }}" autocomplete="new-password">
+                {% if editing %}<div class="form-text">Leave empty to keep the old password.</div>{% endif %}
+              {% else %}
+                <input class="form-control" type="{{ f.kind }}" id="{{ f.name }}" name="{{ f.name }}" value="{{ f.value }}">
+              {% endif %}
+            {% endif %}
+          </div>
+        {% endfor %}
+        <button class="btn btn-primary">Save</button>
+        <a class="btn btn-outline-secondary" href="{{ url_for('admin.list_rows', table=table) }}">Cancel</a>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

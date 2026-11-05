@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Applications{% endblock %}
+{% block content %}
+<a href="{{ url_for('employer.dashboard') }}" class="small">&larr; Back to dashboard</a>
+<h3 class="mb-3 mt-2">Applications for: {{ job.title }}</h3>
+
+{% for a in applications %}
+<div class="card mb-3 shadow-sm">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <div>
+        <h5 class="mb-0">{{ a.seeker.user.full_name }}</h5>
+        <p class="text-muted mb-1">{{ a.seeker.headline or 'No headline' }}</p>
+        <p class="mb-1">
+          {% for ss in a.seeker.seeker_skills %}<span class="badge bg-success">{{ ss.skill.name }}</span> {% endfor %}
+        </p>
+      </div>
+      <div><span class="badge bg-primary fs-6">{{ a.status.name }}</span></div>
+    </div>
+    <p class="mt-2 mb-2" style="white-space: pre-line"><strong>Cover letter:</strong> {{ a.cover_letter }}</p>
+    <p class="small text-muted mb-2">Applied on {{ a.applied_at.strftime('%d %b %Y') }}
+      {% if a.resume %} | Resume: {{ a.resume.title }}{% endif %}</p>
+
+    <form method="post" action="{{ url_for('employer.update_status', app_id=a.id) }}" class="row g-2">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="col-md-3">
+        <select name="status_id" class="form-select form-select-sm">
+          {% for s in statuses %}<option value="{{ s.id }}" {{ 'selected' if s.id == a.status_id }}>{{ s.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6"><input name="note" class="form-control form-control-sm" maxlength="200" placeholder="Note (optional)"></div>
+      <div class="col-md-3"><button class="btn btn-sm btn-primary">Update status</button></div>
+    </form>
+  </div>
+</div>
+{% else %}
+  <p class="text-muted">No one has applied yet.</p>
+{% endfor %}
+{% endblock %}

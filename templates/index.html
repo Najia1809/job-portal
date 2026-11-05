@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "_macros.html" import job_card %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="p-5 mb-4 bg-light rounded-3 text-center">
+  <h1 class="display-5 fw-bold">Find your next job</h1>
+  <p class="lead">Search jobs, apply online and track your applications in one place.</p>
+  <form class="row justify-content-center g-2" action="{{ url_for('main.jobs') }}" method="get">
+    <div class="col-md-6">
+      <input class="form-control form-control-lg" name="q" placeholder="Job title or company" value="{{ last_search }}">
+    </div>
+    <div class="col-auto"><button class="btn btn-primary btn-lg">Search</button></div>
+  </form>
+  {% if last_search %}
+    <p class="mt-3 text-muted small">Your last search was: <strong>{{ last_search }}</strong></p>
+  {% endif %}
+</div>
+
+<h4 class="mb-3">Latest Jobs</h4>
+<div class="row g-3">
+  {% for job in jobs %}
+    <div class="col-md-4">{{ job_card(job) }}</div>
+  {% else %}
+    <p class="text-muted">No jobs yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

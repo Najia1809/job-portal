@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% from "_macros.html" import job_card, pager %}
+{% block title %}Browse Jobs{% endblock %}
+{% block content %}
+<h3 class="mb-3">Browse Jobs</h3>
+<form class="row g-2 mb-4" method="get">
+  <div class="col-md-3"><input class="form-control" name="q" placeholder="Title or company" value="{{ q }}"></div>
+  <div class="col-md-2">
+    <select class="form-select" name="category">
+      <option value="">All categories</option>
+      {% for c in categories %}<option value="{{ c.id }}" {{ 'selected' if category == c.id }}>{{ c.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <select class="form-select" name="job_type">
+      <option value="">All types</option>
+      {% for t in job_types %}<option value="{{ t.id }}" {{ 'selected' if job_type == t.id }}>{{ t.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <select class="form-select" name="city">
+      <option value="">All cities</option>
+      {% for c in cities %}<option value="{{ c.id }}" {{ 'selected' if city == c.id }}>{{ c.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <button class="btn btn-primary">Search</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('main.jobs') }}">Clear</a>
+  </div>
+</form>
+
+<p class="text-muted">{{ pagination.total }} job(s) found</p>
+<div class="row g-3">
+  {% for job in pagination.items %}
+    <div class="col-md-4">{{ job_card(job) }}</div>
+  {% else %}
+    <p>No jobs match your search.</p>
+  {% endfor %}
+</div>
+<div class="mt-4">{{ pager(pagination, 'main.jobs', q=q, category=category, job_type=job_type, city=city) }}</div>
+{% endblock %}

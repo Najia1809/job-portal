@@ -1,0 +1,55 @@
+{# _macros.html - small reusable pieces so we do not repeat code #}
+
+{% macro field(f) %}
+  {% if f.type == 'BooleanField' %}
+    <div class="form-check mb-3">
+      {{ f(class="form-check-input") }}
+      {{ f.label(class="form-check-label") }}
+    </div>
+  {% else %}
+    <div class="mb-3">
+      {{ f.label(class="form-label") }}
+      {% if f.type == 'SelectField' %}
+        {{ f(class="form-select" ~ (" is-invalid" if f.errors else "")) }}
+      {% elif f.type == 'SelectMultipleField' %}
+        {{ f(class="form-select", size=6) }}
+        <div class="form-text">Hold Ctrl to select more than one.</div>
+      {% else %}
+        {{ f(class="form-control" ~ (" is-invalid" if f.errors else "")) }}
+      {% endif %}
+      {% for e in f.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro pager(p, endpoint) %}
+  {% if p.pages > 1 %}
+  <nav>
+    <ul class="pagination justify-content-center">
+      {% for n in range(1, p.pages + 1) %}
+        <li class="page-item {{ 'active' if n == p.page }}">
+          <a class="page-link" href="{{ url_for(endpoint, page=n, **kwargs) }}">{{ n }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
+{% endmacro %}
+
+{% macro job_card(job) %}
+  <div class="card h-100 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title"><a class="text-decoration-none" href="{{ url_for('main.job_detail', job_id=job.id) }}">{{ job.title }}</a></h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{ job.company.name }}</h6>
+      <p class="mb-2">
+        <span class="badge bg-primary">{{ job.job_type.name }}</span>
+        <span class="badge bg-secondary">{{ job.category.name }}</span>
+        {% for loc in job.locations %}<span class="badge bg-light text-dark border">{{ loc.city.name }}</span>{% endfor %}
+      </p>
+      <p class="card-text small text-muted">{{ job.description[:110] }}{% if job.description|length > 110 %}...{% endif %}</p>
+    </div>
+    <div class="card-footer bg-white small text-muted">
+      {% if job.salary_range %}{{ job.salary_range.label }}{% else %}Salary not shown{% endif %}
+    </div>
+  </div>
+{% endmacro %}

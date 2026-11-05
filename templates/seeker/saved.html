@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "_macros.html" import job_card %}
+{% block title %}Saved Jobs{% endblock %}
+{% block content %}
+<h3 class="mb-3">Saved Jobs</h3>
+<div class="row g-3">
+  {% for item in items %}
+    <div class="col-md-4">
+      {{ job_card(item.job) }}
+      <form method="post" action="{{ url_for('seeker.unsave_job', job_id=item.job_id) }}" class="mt-2">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-sm btn-outline-danger">Remove</button>
+      </form>
+    </div>
+  {% else %}
+    <p class="text-muted">No saved jobs.</p>
+  {% endfor %}
+</div>
+{% endblock %}
